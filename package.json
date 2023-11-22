@@ -1,0 +1,23 @@
+{
+  "name": "app-socket",
+  "version": "1.0.0",
+  "description": "App with sockets and Node.Js",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/KryptomSilver/app-socket.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/KryptomSilver/app-socket/issues"
+  },
+  "homepage": "https://github.com/KryptomSilver/app-socket#readme",
+  "dependencies": {
+    "express": "^4.18.2",
+    "socket.io": "^4.7.2"
+  }
+}
