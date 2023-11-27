@@ -1,0 +1,123 @@
+<!doctype html>
+<html>
+  <head>
+    <title>App sockets</title>
+    <script src="/socket.io/socket.io.js"></script>
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css"
+      integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T"
+      crossorigin="anonymous"
+    />
+    <link rel="stylesheet" type="text/css" href="css/index.css" />
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
+      crossorigin="anonymous"
+    ></script>
+  </head>
+  <body>
+    <!-- Modal -->
+    <div
+      class="modal fade"
+      id="myModal"
+      data-bs-backdrop="static"
+      data-bs-keyboard="false"
+      tabindex="-1"
+      aria-labelledby="staticBackdropLabel"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog">
+        <form id="formUsername" class="modal-content">
+          <div class="modal-header">
+            <h3 class="modal-title fs-5" id="staticBackdropLabel">
+              Agregar nombre de usuario
+            </h3>
+          </div>
+          <div class="modal-body">
+            <div class="form-group">
+              <label>Nombre usuario</label>
+              <input class="form-control" type="text" id="userName" />
+            </div>
+          </div>
+          <div class="modal-footer">
+            <input type="submit" value="Enviar" class="btn btn-primary ml-2" />
+          </div>
+        </form>
+      </div>
+    </div>
+    <div class="h-100">
+      <div class="h-75 w-100 d-flex justify-content-center">
+        <ul id="messages"></ul>
+      </div>
+      <form id="form" class="h-35 d-flex justify-content-center">
+        <div class="form-inline">
+          <input type="text" id="message" class="form-control" />
+          <input type="submit" value="Enviar" class="btn btn-primary ml-2" />
+        </div>
+      </form>
+    </div>
+    <script>
+      $(document).ready(function () {
+        localStorage.clear();
+        $("#myModal").modal("show");
+        var rojo = Math.floor(Math.random() * 256);
+        var verde = Math.floor(Math.random() * 256);
+        var azul = Math.floor(Math.random() * 256);
+        var componenteRojo = rojo.toString(16).padStart(2, "0");
+        var componenteVerde = verde.toString(16).padStart(2, "0");
+        var componenteAzul = azul.toString(16).padStart(2, "0");
+
+        // Formar el color hexadecimal
+        var color = "#" + componenteRojo + componenteVerde + componenteAzul;
+
+        localStorage.setItem("color", color);
+      });
+      var socket = io();
+      var form = document.getElementById("form");
+      var formUsername = document.getElementById("formUsername");
+      var input = document.getElementById("message");
+      var inputUsername = document.getElementById("userName");
+      var messages = document.getElementById("messages");
+      formUsername.addEventListener("submit", function (e) {
+        e.preventDefault();
+        if (inputUsername.value) {
+          localStorage.setItem("userName", inputUsername.value);
+          $("#myModal").modal("hide");
+          inputUsername.value = "";
+        }
+      });
+      form.addEventListener("submit", function (e) {
+        e.preventDefault();
+        if (input.value) {
+          socket.emit(
+            "send-message",
+            input.value,
+            localStorage.getItem("userName"),
+            localStorage.getItem("color"),
+          );
+          input.value = "";
+        }
+      });
+      socket.on("send-message", function (message, nickname, color) {
+        var item = document.createElement("li");
+        item.style.backgroundColor = "#FFFFFF";
+        item.style.border = "1px solid #000";
+        item.style.padding = ".5rem 1rem";
+        item.style.marginTop = ".5rem";
+        item.innerHTML =
+          "<span style='color:" +
+          color +
+          "';>" +
+          nickname +
+          "</span>: " +
+          "<span style='color:#000'>" +
+          message +
+          "</span>";
+        messages.appendChild(item);
+        window.scrollTo(0, document.body.scrollHeight);
+      });
+    </script>
+  </body>
+</html>
